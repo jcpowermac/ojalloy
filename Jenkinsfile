@@ -67,7 +67,7 @@ node {
             }
         }
     }
-    else (env.BRANCH_NAME) {
+    else if(env.BRANCH_NAME) {
         println(env.BRANCH_NAME)
         println(scm)
     }
