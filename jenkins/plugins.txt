@@ -72,4 +72,4 @@ workflow-support
 workflow-api
 pipeline-github-lib
 github-organization-folder
-job-dsl
+job-dsl:1.59
