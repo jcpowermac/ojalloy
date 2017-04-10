@@ -7,8 +7,8 @@ spec:
   source:
     type: "Git"
     git:
-      uri: "https://github.com/aweiteka/playbook2image"
-      ref: "master"
+      uri: "https://github.com/jcpowermac/ojalloy"
+      ref: "testing"
   strategy:
     type: "JenkinsPipeline"
     jenkinsPipelineStrategy:

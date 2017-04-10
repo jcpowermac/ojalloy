@@ -1,8 +1,8 @@
 #!groovy
 
-organizationFolder('aweiteka') {
+organizationFolder('jcpowermac') {
     description('This contains branch source jobs for GitHub')
-    displayName('aweiteka')
+    displayName('jcpowermac')
   	orphanedItemStrategy {
         discardOldItems {
 		    daysToKeep(0)
@@ -12,9 +12,9 @@ organizationFolder('aweiteka') {
 	organizations {
 		github {
             apiUri('https://api.github.com')
-			repoOwner('aweiteka')
+			repoOwner('jcpowermac')
 			scanCredentialsId("${CRED_ID}")
-			pattern('playbook2image')
+			pattern('ojalloy')
 			checkoutCredentialsId("${CRED_ID}")
 			buildOriginBranch(true)
 			buildOriginBranchWithPR(true)
