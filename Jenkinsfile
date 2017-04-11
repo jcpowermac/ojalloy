@@ -8,6 +8,7 @@ node {
     def source = ""
 
     //echo sh(returnStdout: true, script: 'env')
+    println(scm.dump())
     println(scm.branches[0])
     println(scm.browser.url)
 
