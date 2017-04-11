@@ -69,7 +69,7 @@ node {
     }
     else if(env.BRANCH_NAME) {
         println(env.BRANCH_NAME)
-        println(scm.browser.getUrl())
+        println(scm.browser.dump())
     }
 }
 
