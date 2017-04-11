@@ -11,6 +11,7 @@ node {
     println(scm.dump())
     println(scm.branches[0])
     println(scm.browser.url)
+    println(this.dump())
 
     if (env.CHANGE_URL) {
 
@@ -29,6 +30,7 @@ node {
             error("Unable to read GitHub JSON file")
         }
 
+        /*
         openshift.withCluster() {
             openshift.withProject() {
                 try {
@@ -69,6 +71,7 @@ node {
                 }
             }
         }
+        */
     }
     else if(env.BRANCH_NAME) {
         println(env.BRANCH_NAME)
