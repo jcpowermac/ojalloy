@@ -7,7 +7,9 @@ properties([disableConcurrentBuilds()])
 node {
     def source = ""
 
-    echo sh(returnStdout: true, script: 'env')
+    //echo sh(returnStdout: true, script: 'env')
+    println(scm.branches[0])
+    println(scm.browser.url)
 
     if (env.CHANGE_URL) {
 
@@ -69,8 +71,6 @@ node {
     }
     else if(env.BRANCH_NAME) {
         println(env.BRANCH_NAME)
-        println(scm.branches[0])
-        println(scm.browser.url)
     }
 }
 
