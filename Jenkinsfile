@@ -17,7 +17,7 @@ node {
     println(scm.browser.url)
     def url = scm.browser.url
     def branch = scm.branches[0]
-    println(this.dump())
+    println(branch)
 
     if (env.CHANGE_URL) {
         println(env.CHANGE_URL)
