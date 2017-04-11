@@ -7,9 +7,15 @@ def call(Closure body) {
     body()
 
 
-    //cloneUrl
-    //branch
     def newBuild = null
+    def url = config.url
+    def branch = config.branch
+    if(url == null) {
+        url = scm.browser.url
+    }
+    if(branch == null ) {
+        branch = scm.branches[0]
+    }
 
     openshift.withCluster() {
         openshift.withProject() {

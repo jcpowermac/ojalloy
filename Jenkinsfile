@@ -15,8 +15,8 @@ node {
     println(scm.dump())
     println(scm.branches[0])
     println(scm.browser.url)
-    def url = scm.browser.url
-    def branch = scm.branches[0]
+    //def url = scm.browser.url
+    //def branch = scm.branches[0]
     println(branch)
 
     if (env.CHANGE_URL) {
@@ -38,16 +38,13 @@ node {
         }
 
         openshiftNewBuild {
-            cloneUrl = pull.head.repo.clone_url
+            url = pull.head.repo.clone_url
             branch = pull.head.ref
         }
 
     }
     else {
-        openshiftNewBuild {
-            cloneUrl = url 
-            branch = "${branch}"
-        }
+        openshiftNewBuild {}
     }
 }
 
