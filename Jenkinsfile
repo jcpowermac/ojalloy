@@ -19,6 +19,9 @@ node {
     println(scm.branches[0])
     println(scm.browser.url)
 
+    String scmBranch = scm.branches[0]
+    String scmUrl = scm.browser.url
+
     if (env.CHANGE_URL) {
         println(env.CHANGE_URL)
 
@@ -44,8 +47,8 @@ node {
     }
     else {
         newBuildOpenShift{
-            url = scm.browser.url
-            branch = scm.branches[0]
+            url = scmUrl
+            branch = scmBranch
         }
 
     }
