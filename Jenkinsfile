@@ -46,7 +46,7 @@ node {
     else {
         openshiftNewBuild {
             cloneUrl = url 
-            branch = branch 
+            branch = "${branch}"
         }
     }
 }
