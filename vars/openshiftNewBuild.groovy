@@ -10,10 +10,10 @@ def call(Closure body) {
     def newBuild = null
     def url = null
     def branch = null
-    if(!config.containsKey('url') ){
+    if(!config.containsKey('url') ) {
         url = scm.browser.url
     }
-    if(!config.containsKey('branch') {
+    if(!config.containsKey('branch')) {
         branch = scm.branches[0]
     }
 
