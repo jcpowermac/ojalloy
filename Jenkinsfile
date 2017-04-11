@@ -15,6 +15,8 @@ node {
     println(scm.dump())
     println(scm.branches[0])
     println(scm.browser.url)
+    def url = scm.browser.url
+    def branch = scm.branches[0]
     println(this.dump())
 
     if (env.CHANGE_URL) {
@@ -43,8 +45,8 @@ node {
     }
     else {
         openshiftNewBuild {
-            cloneUrl = scm.browser.url
-            branch = scm.branches[0]
+            cloneUrl = url 
+            branch = branch 
         }
     }
 }
