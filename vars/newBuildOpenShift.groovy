@@ -4,24 +4,19 @@ def call(Closure body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
+
+
+    println(body.getProperty('url'))
+    println(body.getProperty('branch'))
+
     body()
 
-
-    def newBuild = null
-    def url = null
-    def branch = null
-    if(!config.containsKey('url') ) {
-        url = scm.browser.url
-    }
-    if(!config.containsKey('branch')) {
-        branch = scm.branches[0]
-    }
 
     openshift.withCluster() {
         openshift.withProject() {
             try {
                 // use oc new-build to build the image using the clone_url and ref
-                newBuild = openshift.newBuild("${config.cloneUrl}#${config.branch}")
+                newBuild = openshift.newBuild("${config.url}#${config.branch}")
                 echo "newBuild created: ${newBuild.count()} objects : ${newBuild.names()}"
                 def builds = newBuild.narrow("bc").related("builds")
 

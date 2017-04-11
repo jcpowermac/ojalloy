@@ -8,6 +8,9 @@ import com.redhat.*
 
 properties([disableConcurrentBuilds()])
 
+
+
+
 node {
     def source = ""
 
@@ -19,7 +22,6 @@ node {
     if (env.CHANGE_URL) {
         println(env.CHANGE_URL)
 
-        def newBuild = null
         def changeUrl = env.CHANGE_URL
 
         // Query the github repo api to return the clone_url and the ref (branch name)
@@ -34,14 +36,18 @@ node {
             error("Unable to read GitHub JSON file")
         }
 
-        openshiftNewBuild {
+        newBuildOpenShift {
             url = pull.head.repo.clone_url
             branch = pull.head.ref
         }
 
     }
     else {
-        openshiftNewBuild {}
+        newBuildOpenShift{
+            url = scm.browser.url
+            branch = scm.branches[0]
+        }
+
     }
 }
 
