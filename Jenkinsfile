@@ -2,6 +2,10 @@
 
 // vim: ft=groovy
 
+@Library('Utils')
+
+import com.redhat.*
+
 properties([disableConcurrentBuilds()])
 
 node {
