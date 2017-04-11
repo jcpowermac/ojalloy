@@ -14,6 +14,7 @@ node {
     println(this.dump())
 
     if (env.CHANGE_URL) {
+        println(env.CHANGE_URL)
 
         def newBuild = null
         def changeUrl = env.CHANGE_URL
