@@ -8,7 +8,7 @@ spec:
     type: "Git"
     git:
       uri: "https://github.com/jcpowermac/ojalloy"
-      ref: "testing"
+      ref: "master"
   strategy:
     type: "JenkinsPipeline"
     jenkinsPipelineStrategy:

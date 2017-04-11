@@ -19,7 +19,7 @@
           <buildForkPRHead>false</buildForkPRHead>
         </scm>
       </retriever>
-      <defaultVersion>testing</defaultVersion>
+      <defaultVersion>master</defaultVersion>
       <implicit>false</implicit>
       <allowVersionOverride>true</allowVersionOverride>
     </org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
