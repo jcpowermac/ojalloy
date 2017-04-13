@@ -73,3 +73,5 @@ workflow-api
 pipeline-github-lib
 github-organization-folder
 job-dsl:1.59
+pipeline-milestone-step
+lockable-resources
