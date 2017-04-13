@@ -13,8 +13,19 @@ def call(Closure body) {
             openshift.withProject() {
                 try {
                     def builds = null
-                    // use oc new-build to build the image using the clone_url and ref
+
+                    /* If the OpenShift oc new-build command is ran in succession it can cause a
+                     * race if the base imagestream does not already exist.  In normal situations
+                     * this is not a problem but in Jenkins when multiple jobs could be occurring
+                     * simultaneously this will happen.  Adding a lock in this section resolves
+                     * that issue.
+                     */
+
                     lock(resource: 'openshift.newBuild', inversePrecedence: true) {
+                        /* Use oc new-build to build the image using the clone_url and ref
+                         * TODO: Add options for context-dir, dockerfile
+                         */
+
                         newBuild = openshift.newBuild("${config.url}#${config.branch}", "--name=${config.branch}")
                         echo "newBuild created: ${newBuild.count()} objects : ${newBuild.names()}"
                         builds = newBuild.narrow("bc").related("builds")
