@@ -2,10 +2,26 @@
 package com.redhat
 
 import com.cloudbees.groovy.cps.NonCPS
-import com.cloudbees.plugins.credentials.impl.*;
-import com.cloudbees.plugins.credentials.*;
-import com.cloudbees.plugins.credentials.domains.*;
+import com.cloudbees.plugins.credentials.impl.*
+import com.cloudbees.plugins.credentials.*
+import com.cloudbees.plugins.credentials.domains.*
 
+import jenkins.model.JenkinsLocationConfiguration
+
+
+@NonCPS
+Boolean configureRootUrl(String url) {
+    try {
+        JenkinsLocationConfiguration jlc = JenkinsLocationConfiguration.get()
+        jlc.setUrl(url)
+        jlc.save()
+        return true
+    }
+    catch (error) {
+        println(error.toString())
+        return false
+    }
+}
 
 @NonCPS 
 String createCredentialsFromOpenShift(HashMap secret, String id) {

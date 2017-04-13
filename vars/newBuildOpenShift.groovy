@@ -6,7 +6,6 @@ def call(Closure body) {
     body.delegate = config
     body()
 
-
     def newBuild = null
 
     stage('OpenShift Build') {
@@ -14,7 +13,7 @@ def call(Closure body) {
             openshift.withProject() {
                 try {
                     // use oc new-build to build the image using the clone_url and ref
-                    newBuild = openshift.newBuild("${config.url}#${config.branch}")
+                    newBuild = openshift.newBuild("${config.url}#${config.branch}", "--name=${config.branch}")
                     echo "newBuild created: ${newBuild.count()} objects : ${newBuild.names()}"
                     def builds = newBuild.narrow("bc").related("builds")
 
@@ -34,11 +33,8 @@ def call(Closure body) {
                 finally {
                     if (newBuild) {
                         def result = newBuild.narrow("bc").logs()
-                        echo "Result of logs operation:"
-                        echo "  status: ${result.status}"
-                        echo "  stderr: ${result.err}"
-                        echo "  number of actions to fulfill: ${result.actions.size()}"
-                        echo "  first action executed: ${result.actions[0].cmd}"
+                        echo "status: ${result.status}"
+                        echo "${result.actions[0].cmd}"
 
                         if (result.status != 0) {
                             echo "${result.out}"
