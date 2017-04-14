@@ -21,7 +21,7 @@ node {
         files = findFiles(glob: '**/Dockerfile*')
 
         for (def f : files) {
-            println("${f.name}\n${f.path}\n${f.directory}\n${f.parent}")
+            println("${f.name}\n${f.path}\n${f.directory}")
         }
     }
     /* if CHANGE_URL is defined then this is a pull request
