@@ -44,18 +44,20 @@ node {
         }
 
         for (int i = 0; i < dockerfiles.size; i++) {
+            String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
             newBuildOpenShift {
                 url = pull.url
                 branch = pull.ref
-                contextDir = dockerfiles[i].path.replace(dockerfiles[i].name, "")
+                contextDir = path
             }
         }
     } else {
         for (int i = 0; i < dockerfiles.size; i++) {
+            String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
             newBuildOpenShift {
                 url = scmUrl
                 branch = scmBranch
-                contextDir = dockerfiles[i].path.replace(dockerfiles[i].name, "")
+                contextDir = path
             }
         }
     }
