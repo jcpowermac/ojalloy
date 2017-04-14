@@ -47,7 +47,7 @@ node {
             newBuildOpenShift {
                 url = pull.url
                 branch = pull.ref
-                contextDir = dockerfiles[i].path.replace(f.name, "")
+                contextDir = dockerfiles[i].path.replace(dockerfiles[i].name, "")
             }
         }
     } else {
@@ -55,7 +55,7 @@ node {
             newBuildOpenShift {
                 url = scmUrl
                 branch = scmBranch
-                contextDir = dockerfiles[i].path.replace(f.name, "")
+                contextDir = dockerfiles[i].path.replace(dockerfiles[i].name, "")
             }
         }
     }
