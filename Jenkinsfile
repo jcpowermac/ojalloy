@@ -26,8 +26,9 @@ node {
     stage('checkout') {
         checkout scm
         files = findFiles(glob: '**/Dockerfile*')
-        files.each {
-            println("${it.name}\n${it.path}\n${it.directory}")
+
+        for (def f : files)
+            println("${f.name}\n${f.path}\n${f.directory}")
         }
     }
     if (env.CHANGE_URL) {
