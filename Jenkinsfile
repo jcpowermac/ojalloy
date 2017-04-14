@@ -43,7 +43,7 @@ node {
             }
         }
 
-        for (int i = 0; i < dockerfiles.size; i++) {
+        for (int i = 0; i < dockerfiles.size(); i++) {
             String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
             newBuildOpenShift {
                 url = pull.url
@@ -52,7 +52,7 @@ node {
             }
         }
     } else {
-        for (int i = 0; i < dockerfiles.size; i++) {
+        for (int i = 0; i < dockerfiles.size(); i++) {
             String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
             newBuildOpenShift {
                 url = scmUrl
