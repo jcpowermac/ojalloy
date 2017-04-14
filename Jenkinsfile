@@ -27,7 +27,7 @@ node {
         checkout scm
         files = findFiles(glob: '**/Dockerfile*')
 
-        for (def f : files)
+        for (def f : files) {
             println("${f.name}\n${f.path}\n${f.directory}")
         }
     }
