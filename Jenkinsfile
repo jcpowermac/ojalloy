@@ -10,6 +10,7 @@ properties([disableConcurrentBuilds()])
 
 node {
     def source = ""
+    def files = null
     def utils = new com.redhat.Utils()
     String scmBranch = scm.branches[0]
     String scmUrl = scm.browser.url
@@ -22,6 +23,13 @@ node {
      * for new-build.
      */
 
+    stage('checkout') {
+        scm checkout
+        files = findFiles(glob: '**/Dockerfile*')
+        files.each {
+            println("${it.name}\n${it.path}\n${it.directory}")
+        }
+    }
     if (env.CHANGE_URL) {
         def pull = null
 
