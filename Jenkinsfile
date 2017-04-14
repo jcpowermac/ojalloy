@@ -10,7 +10,7 @@ properties([disableConcurrentBuilds()])
 
 node {
     def source = ""
-    def files = null
+    def dockerfiles = null
     def utils = new com.redhat.Utils()
     String scmBranch = scm.branches[0]
     String scmUrl = scm.browser.url
@@ -18,11 +18,7 @@ node {
 
     stage('checkout') {
         checkout scm
-        files = findFiles(glob: '**/Dockerfile*')
-
-        for (def f : files) {
-            println("${f.name}\n${f.path}\n${f.directory}")
-        }
+        dockerfiles = findFiles(glob: '**/Dockerfile')
     }
     /* if CHANGE_URL is defined then this is a pull request
      * additional steps are required to determine the git url
@@ -42,15 +38,20 @@ node {
             }
         }
 
-        newBuildOpenShift {
-            url = pull.url
-            branch = pull.ref
+        for (def f : dockerfiles) {
+            newBuildOpenShift {
+                url = pull.url
+                branch = pull.ref
+                contextDir = f.path.replace(f.name, "")
+            }
         }
-    }
-    else {
-        newBuildOpenShift{
-            url = scmUrl
-            branch = scmBranch
+    } else {
+        for (def f : dockerfiles) {
+            newBuildOpenShift {
+                url = scmUrl
+                branch = scmBranch
+                contextDir = f.path.replace(f.name, "")
+            }
         }
     }
 }
