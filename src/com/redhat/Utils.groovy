@@ -7,20 +7,15 @@ import com.cloudbees.groovy.cps.NonCPS
 import com.cloudbees.plugins.credentials.impl.*
 import com.cloudbees.plugins.credentials.*
 import com.cloudbees.plugins.credentials.domains.*
-
 import java.util.logging.Level
 import java.util.logging.Logger
-
 import jenkins.model.JenkinsLocationConfiguration
-
-import org.kohsuke.github.*;
-
+import org.kohsuke.github.*
 
 
 @NonCPS
 HashMap getGitHubPR(String login, String oauthAccessToken, String changeUrl) {
     try {
-
         String[] changeUrlArray = changeUrl.split('[/]')
         String organization = changeUrlArray[3]
         String repository = changeUrlArray[4]
@@ -32,8 +27,6 @@ HashMap getGitHubPR(String login, String oauthAccessToken, String changeUrl) {
         Logger.getLogger("com.redhat.Utils").log(Level.SEVERE, all.toString())
         throw all
     }
-
-
 }
 
 @NonCPS
