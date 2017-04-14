@@ -46,7 +46,7 @@ HashMap getGitHubPR(String login, String oauthAccessToken, String organization, 
                 .getPullRequest(pullRequest).getHead()
 
         map['ref'] = pointer.ref
-        map['url'] = pointer.repository.getHtmlUrl().toString()
+        map['url'] = pointer.repository.gitHttpTransportUrl().toString()
         return map
     }
     catch (all) {
