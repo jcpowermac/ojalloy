@@ -1,4 +1,4 @@
-[![Build Status](https://jenkins.apps.virtomation.com/buildStatus/icon?job=jcpowermac/ojalloy/master)]
+![Build Status](https://jenkins.apps.virtomation.com/buildStatus/icon?job=jcpowermac/ojalloy/master)
 
 ### ojalloy
 
