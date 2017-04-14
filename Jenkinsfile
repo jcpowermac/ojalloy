@@ -40,7 +40,7 @@ node {
             githubUri = githubUri.replaceAll("pull", "pulls")
 
             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "github", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                def map = utils.getGitHubPR(env.USERNAME, env.PASSWORD, "jcpowermac", "ojalloy", 5)
+                def map = utils.getGitHubPR(env.USERNAME, env.PASSWORD, changeUrl)
                 println(map.toString())
                 sh("curl -u ${env.USERNAME}:${env.PASSWORD} -o ${env.WORKSPACE}/github.json ${githubUri}")
             }

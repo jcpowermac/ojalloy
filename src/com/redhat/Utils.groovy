@@ -16,6 +16,26 @@ import jenkins.model.JenkinsLocationConfiguration
 import org.kohsuke.github.*;
 
 
+
+@NonCPS
+HashMap getGitHubPR(String login, String oauthAccessToken, String changeUrl) {
+    try {
+
+        String[] changeUrlArray = changeUrl.split('[/]')
+        String organization = changeUrlArray[3]
+        String repository = changeUrlArray[4]
+        int pullRequest = Integer.parseInt(changeUrlArray[6])
+
+        return getGitHubPR(login, oauthAccessToken, organization, repository, pullRequest)
+    }
+    catch(all){
+        Logger.getLogger("com.redhat.Utils").log(Level.SEVERE, all.toString())
+        throw all
+    }
+
+
+}
+
 @NonCPS
 HashMap getGitHubPR(String login, String oauthAccessToken, String organization, String repository, int pullRequest) {
     HashMap map = [:]
@@ -26,7 +46,7 @@ HashMap getGitHubPR(String login, String oauthAccessToken, String organization, 
                 .getPullRequest(pullRequest).getHead()
 
         map['ref'] = pointer.ref
-        map['url'] = pointer.repository.url.toString()
+        map['url'] = pointer.repository.getHtmlUrl().toString()
         return map
     }
     catch (all) {
