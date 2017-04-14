@@ -16,6 +16,11 @@ node {
     String scmUrl = scm.browser.url
 
 
+    /* Checkout source and find all the Dockerfiles.
+     * This will not include Dockerfiles with extensions. Currently the issue
+     * with using a Dockerfile with an extension is the oc new-build command
+     * does not offer an option to provide the dockerfilePath.
+     */
     stage('checkout') {
         checkout scm
         dockerfiles = findFiles(glob: '**/Dockerfile')
@@ -38,19 +43,19 @@ node {
             }
         }
 
-        for (def f : dockerfiles) {
+        for (int i = 0; i < dockerfiles.size; i++) {
             newBuildOpenShift {
                 url = pull.url
                 branch = pull.ref
-                contextDir = f.path.replace(f.name, "")
+                contextDir = dockerfiles[i].path.replace(f.name, "")
             }
         }
     } else {
-        for (def f : dockerfiles) {
+        for (int i = 0; i < dockerfiles.size; i++) {
             newBuildOpenShift {
                 url = scmUrl
                 branch = scmBranch
-                contextDir = f.path.replace(f.name, "")
+                contextDir = dockerfiles[i].path.replace(f.name, "")
             }
         }
     }
