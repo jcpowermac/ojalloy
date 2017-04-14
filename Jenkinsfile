@@ -24,7 +24,7 @@ node {
      */
 
     stage('checkout') {
-        scm checkout
+        checkout scm
         files = findFiles(glob: '**/Dockerfile*')
         files.each {
             println("${it.name}\n${it.path}\n${it.directory}")
