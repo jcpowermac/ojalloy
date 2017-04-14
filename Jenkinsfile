@@ -22,8 +22,16 @@ node {
      * for new-build.
      */
 
+    def utils = new com.redhat.Utils()
+
     if (env.CHANGE_URL) {
+
         def pull = null
+
+        stage('echo') {
+            echo sh(returnStdout: true, script: 'env')
+        }
+
         stage('Github Url and Ref') {
             def changeUrl = env.CHANGE_URL
 
@@ -32,6 +40,8 @@ node {
             githubUri = githubUri.replaceAll("pull", "pulls")
 
             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "github", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                def map = utils.getGitHubPR(env.USERNAME, env.PASSWORD, "jcpowermac", "ojalloy", 5)
+                println(map.toString())
                 sh("curl -u ${env.USERNAME}:${env.PASSWORD} -o ${env.WORKSPACE}/github.json ${githubUri}")
             }
             pull = readJSON file: 'github.json'
