@@ -1,9 +1,5 @@
 #!groovy
-
-// vim: ft=groovy
-
 @Library('Utils')
-
 import com.redhat.*
 
 properties([disableConcurrentBuilds()])
@@ -27,13 +23,11 @@ node {
     /* if CHANGE_URL is defined then this is a pull request
      * additional steps are required to determine the git url
      * and branch name to pass to new-build.
-     *
      * Otherwise just use the scm.browser.url and scm.branches[0]
      * for new-build.
      */
     if (env.CHANGE_URL) {
         def pull = null
-
         stage('Github Url and Ref') {
 
             // Query the github repo api to return the clone_url and the ref (branch name)
@@ -58,5 +52,4 @@ node {
     }
 }
 
-
-
+// vim: ft=groovy
