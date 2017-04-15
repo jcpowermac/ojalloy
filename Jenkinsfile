@@ -12,9 +12,8 @@ node {
     def source = ""
     def dockerfiles = null
     def utils = new com.redhat.Utils()
-    String scmBranch = scm.branches[0]
+    String scmRef = scm.branches[0]
     String scmUrl = scm.browser.url
-
 
     /* Checkout source and find all the Dockerfiles.
      * This will not include Dockerfiles with extensions. Currently the issue
@@ -40,25 +39,21 @@ node {
             // Query the github repo api to return the clone_url and the ref (branch name)
             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "github", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 pull = utils.getGitHubPR(env.USERNAME, env.PASSWORD, env.CHANGE_URL)
+                scmUrl = pull.url
+                scmRef = pull.ref
             }
         }
-
-        for (int i = 0; i < dockerfiles.size(); i++) {
-            String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
-            newBuildOpenShift {
-                url = pull.url
-                branch = pull.ref
-                contextDir = path
-            }
-        }
-    } else {
-        for (int i = 0; i < dockerfiles.size(); i++) {
-            String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
-            newBuildOpenShift {
-                url = scmUrl
-                branch = scmBranch
-                contextDir = path
-            }
+    }
+    for (int i = 0; i < dockerfiles.size(); i++) {
+        /* Execute oc new-build on each dockerfile available
+         * in the repo.  The context-dir is the path removing the
+         * name (i.e. Dockerfile)
+         */
+        String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
+        newBuildOpenShift {
+            url = scmUrl
+            branch = scmRef
+            contextDir = path
         }
     }
 }
