@@ -18,7 +18,7 @@ import hudson.model.*
 @NonCPS 
 List<hudson.model.ParameterValue> createJobParameters(HashMap configMap) {
     try {
-        List<hudson.model.ParameterValue> parameters = new List<hudson.model.ParameterValue>()
+        List<hudson.model.ParameterValue> parameters = new ArrayList<hudson.model.ParameterValue>()
         configMap.each{ k, v -> 
             parameters.add( new StringParameterValue("${k}", "${v}") )  
         }
