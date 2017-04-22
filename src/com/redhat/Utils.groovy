@@ -11,14 +11,16 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import jenkins.model.JenkinsLocationConfiguration
 import org.kohsuke.github.*
+import hudson.model.*
 
+//java.util.List<hudson.model.ParameterValue>
 
 @NonCPS 
-HashMap[] createJobParameters(HashMap configMap) {
+List<hudson.model.ParameterValue> createJobParameters(HashMap configMap) {
     try {
-        def parameters = []
+        List<hudson.model.ParameterValue> parameters = new List<hudson.model.ParameterValue>()
         configMap.each{ k, v -> 
-            parameters.add( [$class: 'StringParameterValue', name: "${k}", value: "${v}"] )  
+            parameters.add( new StringParameterValue("${k}", "${v}") )  
         }
         return parameters
     }
