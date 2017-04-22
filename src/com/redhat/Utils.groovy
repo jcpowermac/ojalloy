@@ -13,6 +13,21 @@ import jenkins.model.JenkinsLocationConfiguration
 import org.kohsuke.github.*
 
 
+@NonCPS 
+HashMap createJobParameters(HashMap configMap) {
+    try {
+        def parameters = []
+        configMap.each{ k, v -> 
+            parameters.add( [$class: 'StringParameterValue', name: "${k}", value: "${v}"] )  
+        }
+        return parameters
+    }
+    catch(all) {
+        Logger.getLogger("com.redhat.Utils").log(Level.SEVERE, all.toString())
+        throw all
+    }
+}
+
 @NonCPS
 HashMap getGitHubPR(String login, String oauthAccessToken, String changeUrl) {
     try {

@@ -5,6 +5,7 @@ import com.redhat.*
 
 node {
     def id = null
+    def seedJobParameters = null
     def utils = new Utils()
 
     /* The Jenkins root url is configured under
@@ -18,6 +19,13 @@ node {
             utils.configureRootUrl("https://${route.spec.host}")
         }
     }
+    stage('Extract ConfigMap') {
+        openshift.withCluster() {
+            def configMap = openshift.selector( "configmap/orgfolder" ).object().data
+            seedJobParameters = utils.createJobParameters(configMap)
+        }
+    }
+
     stage('OpenShift -> Jenkins credentials') {
         openshift.withCluster() {
             def secret = openshift.selector( "secret/github" ).object()
@@ -25,6 +33,7 @@ node {
         }
     }
     stage('Run Seed Job') {            
-        build job: 'seed', parameters: [[$class: 'StringParameterValue', name: 'CRED_ID', value: id]]
+        build job: 'seed', parameters: seedJobParameters
     }
+
 }
