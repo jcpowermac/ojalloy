@@ -14,7 +14,7 @@ import org.kohsuke.github.*
 
 
 @NonCPS 
-HashMap createJobParameters(HashMap configMap) {
+HashMap[] createJobParameters(HashMap configMap) {
     try {
         def parameters = []
         configMap.each{ k, v -> 
