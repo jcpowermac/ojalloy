@@ -21,7 +21,8 @@ def call(Closure body) {
         openshift.withCluster() {
             openshift.withProject() {
                 try {
-                    openshift.run("${config.branch}", "--image=${config.image}", "--restart=Never", "${env}")
+                    openshift.run("${config.branch}", "--image=${config.image}", "--restart=Never",
+                            "--image-pull-policy=Always", "${env}")
                     pod = openshift.selector("pod/${config.branch}")
 
                     timeout(10) {
