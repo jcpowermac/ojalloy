@@ -39,6 +39,7 @@ def call(Closure body) {
                 finally {
                     if (pod) {
                         def result = pod.logs()
+                        println(result)
                         echo "status: ${result.status}"
                         echo "${result.actions[0].cmd}"
 

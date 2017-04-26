@@ -56,8 +56,9 @@ node {
                 deleteBuild = false
             }
             /* The name of the ImageStream should be the same as the branch
-         * name.
-         */
+             * name. Retrieve the Docker Image Repository.  This is
+             * important since each environment will have a different address.
+             */
             String isRepo = getImageStreamRepo(scmRef)
 
             runOpenShift {
@@ -71,11 +72,9 @@ node {
             stage('Clean Up Resources') {
                 openshift.withCluster() {
                     openshift.withProject() {
-                        println("Start Deleting Stuff")
                         openshift.selector('bc', [build: "${scmRef}"]).delete()
                         openshift.selector('builds', [build: "${scmRef}"]).delete()
                         openshift.selector('is', [build: "${scmRef}"]).delete()
-                        println("End Deleting Stuff")
                     }
                 }
             }
