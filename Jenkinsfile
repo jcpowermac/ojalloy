@@ -70,10 +70,12 @@ node {
         finally {
             openshift.withCluster() {
                 openshift.withProject() {
+                    println("Start Deleting Stuff")
                     def bc = openshift.selector("bc/${scmRef}")
                     bc.related("builds").delete()
                     bc.related("is").delete()
                     bc.related("pods").delete()
+                    println("End Deleting Stuff")
                 }
             }
         }
