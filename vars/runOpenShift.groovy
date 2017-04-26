@@ -10,8 +10,11 @@ def call(Closure body) {
     def podObject = null
     def deletePod = config['deletePod'] ?: false
     String env = ""
+
     if(config['env']) {
-        env = config.env.join("--env ")
+        config.env.each {
+            env += "--env=\'${it}\' "
+        }
     }
 
     stage('OpenShift Run') {
