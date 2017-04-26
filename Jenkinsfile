@@ -68,15 +68,15 @@ node {
             }
         }
         finally {
-            openshift.withCluster() {
-                openshift.withProject() {
-                    println("Start Deleting Stuff")
-                    def bc = openshift.selector("bc/${scmRef}")
-                    bc.related("builds").delete()
-                    bc.related("is").delete()
-                    bc.related("pods").delete()
-                    println("End Deleting Stuff")
-                    sleep 15
+            stage('Clean Up Resources') {
+                openshift.withCluster() {
+                    openshift.withProject() {
+                        println("Start Deleting Stuff")
+                        openshift.selector('bc', [build: "${scmRef}"]).delete()
+                        openshift.selector('builds', [build: "${scmRef}"]).delete()
+                        openshift.selector('is', [build: "${scmRef}"]).delete()
+                        println("End Deleting Stuff")
+                    }
                 }
             }
         }
