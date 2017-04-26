@@ -76,7 +76,7 @@ node {
                     bc.related("is").delete()
                     bc.related("pods").delete()
                     println("End Deleting Stuff")
-                    sleep(1500)
+                    sleep 15
                 }
             }
         }
