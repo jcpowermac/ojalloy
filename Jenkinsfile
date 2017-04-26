@@ -35,6 +35,7 @@ node {
                 pull = utils.getGitHubPR(env.USERNAME, env.PASSWORD, env.CHANGE_URL)
                 scmUrl = pull.url
                 scmRef = pull.ref
+                deleteBuild = true
             }
         }
     }
@@ -44,11 +45,26 @@ node {
          * name (i.e. Dockerfile)
          */
         String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
-        newBuildOpenShift {
+        def newBuild = newBuildOpenShift {
             url = scmUrl
             branch = scmRef
             contextDir = path
+            deleteBuild = false
         }
+        /* The name of the ImageStream should be the same as the branch
+         * name.
+         */
+        String isRepo = getImageStreamRepo(scmRef)
+
+        runOpenShift {
+            deletePod = true
+            branch = scmRef
+            image = isRepo
+            env = ["foo=goo"]
+        }
+
+        newBuild.delete()
+
     }
 }
 

@@ -8,6 +8,7 @@ def call(Closure body) {
 
     def newBuild = null
     def contextDir = config['contextDir'] ?: ""
+    def deleteBuild = config['deleteBuild'] ?: false
 
     stage('OpenShift Build') {
         openshift.withCluster() {
@@ -49,6 +50,7 @@ def call(Closure body) {
                             return it.object().status.phase == "Complete"
                         }
                     }
+                    return newBuild
                 }
                 finally {
                     if (newBuild) {
@@ -60,8 +62,9 @@ def call(Closure body) {
                             echo "${result.out}"
                             error("Image Build Failed")
                         }
-                        // After built we do not need the BuildConfig or the ImageStream
-                        newBuild.delete()
+                        if(deleteBuild) {
+                            newBuild.delete()
+                        }
                     }
                 }
             }
