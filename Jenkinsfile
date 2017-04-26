@@ -63,8 +63,11 @@ node {
             env = ["foo=goo"]
         }
 
-        newBuild.delete()
-
+        openshift.withCluster() {
+            openshift.withProject() {
+                newBuild.delete()
+            }
+        }
     }
 }
 
