@@ -20,6 +20,8 @@ node {
         checkout scm
         dockerfiles = findFiles(glob: '**/Dockerfile')
     }
+
+
     /* if CHANGE_URL is defined then this is a pull request
      * additional steps are required to determine the git url
      * and branch name to pass to new-build.
@@ -40,32 +42,39 @@ node {
         }
     }
     for (int i = 0; i < dockerfiles.size(); i++) {
+
+        try {
         /* Execute oc new-build on each dockerfile available
          * in the repo.  The context-dir is the path removing the
          * name (i.e. Dockerfile)
          */
-        String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
-        def newBuild = newBuildOpenShift {
-            url = scmUrl
-            branch = scmRef
-            contextDir = path
-            deleteBuild = false
-        }
-        /* The name of the ImageStream should be the same as the branch
+            String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
+            newBuildOpenShift {
+                url = scmUrl
+                branch = scmRef
+                contextDir = path
+                deleteBuild = false
+            }
+            /* The name of the ImageStream should be the same as the branch
          * name.
          */
-        String isRepo = getImageStreamRepo(scmRef)
+            String isRepo = getImageStreamRepo(scmRef)
 
-        runOpenShift {
-            deletePod = true
-            branch = scmRef
-            image = isRepo
-            env = ["foo=goo"]
+            runOpenShift {
+                deletePod = true
+                branch = scmRef
+                image = isRepo
+                env = ["foo=goo"]
+            }
         }
-
-        openshift.withCluster() {
-            openshift.withProject() {
-                newBuild.delete()
+        finally {
+            openshift.withCluster() {
+                openshift.withProject() {
+                    def bc = openshift.selector("bc/${scmRef}")
+                    bc.related("builds").delete()
+                    bc.related("is").delete()
+                    bc.related("pods").delete()
+                }
             }
         }
     }
