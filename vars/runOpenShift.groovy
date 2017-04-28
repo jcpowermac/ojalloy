@@ -1,5 +1,7 @@
 #!groovy
 
+import com.redhat.Utils
+
 def call(Closure body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
@@ -8,12 +10,22 @@ def call(Closure body) {
 
     def pod = null
     def podObject = null
-    def deletePod = config['deletePod'] ?: false
-    String env = ""
+    boolean deletePod = config['deletePod'] ?: false
+    def args = []
+
+    args << "${config.branch}"
+    args << "--image=${config.image}"
+    args << "--restart=Never"
+    args << "--image-pull-policy=Always"
 
     if(config['env']) {
-        config.env.each {
-            env += "--env=\'${it}\' "
+        /* BUG: config.env.each works but only
+         * iterated through the first item in the list
+         * DO NOT USE [].each
+         */
+        for(env in config.env) {
+            args << "--env=\"${env}\""
+            println(env)
         }
     }
 
@@ -21,8 +33,14 @@ def call(Closure body) {
         openshift.withCluster() {
             openshift.withProject() {
                 try {
-                    openshift.run("${config.branch}", "--image=${config.image}", "--restart=Never",
-                            "--image-pull-policy=Always", "${env}")
+                    /* Arguments to openshift.run must be expanded using the spread operator
+                       which does not work with CPS.  Created static function in Utils to
+                       get around this limitation.
+
+                       This will not work:
+                       openshift.run(args)
+                     */
+                    new Utils().openShiftRun(openshift, args)
                     pod = openshift.selector("pod/${config.branch}")
 
                     timeout(10) {
@@ -38,14 +56,15 @@ def call(Closure body) {
                 }
                 finally {
                     if (pod) {
+                        podObject = pod.object()
+                        def exitCode = podObject.status.containerStatuses[0].state.terminated.exitCode
                         def result = pod.logs()
-                        println(result)
                         echo "status: ${result.status}"
                         echo "${result.actions[0].cmd}"
 
-                        if (result.status != 0) {
+                        if (exitCode != 0) {
                             echo "${result.out}"
-                            error("Pod failed")
+                            currentBuild.result = 'FAILURE'
                         }
                         if (deletePod) {
                             pod.delete()
@@ -56,3 +75,5 @@ def call(Closure body) {
         }
     }
 }
+
+

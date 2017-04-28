@@ -43,38 +43,45 @@ node {
     }
     for (int i = 0; i < dockerfiles.size(); i++) {
 
+        def resources = null
         try {
         /* Execute oc new-build on each dockerfile available
          * in the repo.  The context-dir is the path removing the
          * name (i.e. Dockerfile)
          */
+            def is = ""
+            def dockerImageRepository = ""
             String path = dockerfiles[i].path.replace(dockerfiles[i].name, "")
-            newBuildOpenShift {
+            newBuild = newBuildOpenShift() {
                 url = scmUrl
                 branch = scmRef
                 contextDir = path
-                deleteBuild = false
+                deleteBuild = false 
+                randomName = true 
             }
-            /* The name of the ImageStream should be the same as the branch
-             * name. Retrieve the Docker Image Repository.  This is
-             * important since each environment will have a different address.
-             */
-            String isRepo = getImageStreamRepo(scmRef)
+            dockerImageRepository = getImageStreamRepo(newBuild.buildConfigName).dockerImageRepository
 
-            runOpenShift {
+	    runOpenShift {
                 deletePod = true
                 branch = scmRef
-                image = isRepo
+                image = dockerImageRepository
                 env = ["foo=goo"]
             }
+
+            resources = newBuild.names
+            currentBuild.result = 'SUCCESS'
+        }
+        catch(all) {
+            currentBuild.result = 'FAILURE'
+            echo "Exception: ${all}"
         }
         finally {
             stage('Clean Up Resources') {
-                openshift.withCluster() {
+               openshift.withCluster() {
                     openshift.withProject() {
-                        openshift.selector('bc', [build: "${scmRef}"]).delete()
-                        openshift.selector('builds', [build: "${scmRef}"]).delete()
-                        openshift.selector('is', [build: "${scmRef}"]).delete()
+                        for (r in resources) {
+                            openshift.selector(r).delete()
+                        }
                     }
                 }
             }

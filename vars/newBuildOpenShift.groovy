@@ -1,4 +1,7 @@
 #!groovy
+import java.util.UUID
+
+
 
 def call(Closure body) {
     def config = [:]
@@ -7,7 +10,26 @@ def call(Closure body) {
     body()
 
     def newBuild = null
-    def contextDir = config['contextDir'] ?: ""
+    String contextDir = config['contextDir'] ?: ""
+    String image = ""
+    String name = config['branch'] ?: ""
+    String imageStream = ""
+
+    if(config['image']) {
+        image = "${config.image}~"
+    }
+
+    if(config['imageStream']) {
+        imageStream = "--image-stream=${config.imageStream}"
+    }
+
+    if(config['randomName']) {
+        name = UUID.randomUUID().toString()
+        if(name[0].isNumber()) {
+            name = name.replaceAll(name[0], 'a')
+        }
+    }
+
     def deleteBuild = config['deleteBuild'] ?: false
 
     stage('OpenShift Build') {
@@ -15,6 +37,7 @@ def call(Closure body) {
             openshift.withProject() {
                 try {
                     def builds = null
+                    def buildConfigName = null
 
                     /* If the OpenShift oc new-build command is ran in succession it can cause a
                      * race if the base imagestream does not already exist.  In normal situations
@@ -29,11 +52,16 @@ def call(Closure body) {
                          * TODO: different filename e.g. Dockerfile.rhel7.
                          */
 
-                        newBuild = openshift.newBuild("${config.url}#${config.branch}",
-                                "--name=${config.branch}",
-                                "--context-dir=${contextDir}")
+                        newBuild = openshift.newBuild("${image}${config.url}#${config.branch}",
+                                "--name=${name}",
+                                "--context-dir=${contextDir}",
+                                "${imageStream}")
                         echo "newBuild created: ${newBuild.count()} objects : ${newBuild.names()}"
-                        builds = newBuild.narrow("bc").related("builds")
+
+                        def buildConfig = newBuild.narrow("bc")
+                        buildConfigName = buildConfig.object().metadata.name
+
+                        builds = buildConfig.related("builds")
                         timeout(5) {
                             builds.watch {
                                 if (it.count() == 0) {
@@ -50,7 +78,8 @@ def call(Closure body) {
                             return it.object().status.phase == "Complete"
                         }
                     }
-                    return newBuild
+
+                    return new HashMap([names: newBuild.names(), buildConfigName: buildConfigName])
                 }
                 finally {
                     if (newBuild) {
@@ -60,7 +89,7 @@ def call(Closure body) {
 
                         if (result.status != 0) {
                             echo "${result.out}"
-                            error("Image Build Failed")
+                            currentBuild.result = 'FAILURE'
                         }
                         if(deleteBuild) {
                             newBuild.delete()

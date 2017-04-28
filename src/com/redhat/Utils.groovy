@@ -13,9 +13,20 @@ import jenkins.model.JenkinsLocationConfiguration
 import org.kohsuke.github.*
 import hudson.model.*
 
-//java.util.List<hudson.model.ParameterValue>
 
-@NonCPS 
+/**
+ * This function just removes the limitation of using the spread operator
+ * under CPS.  Maybe the plugin could also resolve this?
+ * @param openshift
+ * @param args
+ */
+
+@NonCPS
+static void openShiftRun(def openshift, def args) {
+    openshift.run(*args)
+}
+
+@NonCPS
 List<hudson.model.ParameterValue> createJobParameters(HashMap configMap) {
     try {
         List<hudson.model.ParameterValue> parameters = new ArrayList<hudson.model.ParameterValue>()
