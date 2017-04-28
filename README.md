@@ -15,15 +15,15 @@ multibranches (pull requests).
 3. Add the template to OpenShift `oc create -f https://raw.githubusercontent.com/jcpowermac/ojalloy/master/jenkins/openshift/template.yaml`
 4. Process template
   ```
-  oc process docker-image-testing \
-  JENKINS_ORG_FOLDER_NAME=jcowermac \
-  JENKINS_GITHUB_OWNER=jcpowermac \
-  JENKINS_GITHUB_REPO=ojalloy \
-  JENKINS_GITHUB_CRED_ID=github \
-  GITHUB_USERNAME=jcpowermac \
-  GITHUB_TOKEN=token | oc create -f -
+  oc new-app --template docker-image-testing \
+  -p JENKINS_ORG_FOLDER_NAME=jcowermac \
+  -p JENKINS_GITHUB_OWNER=jcpowermac \
+  -p JENKINS_GITHUB_REPO=ojalloy \
+  -p JENKINS_GITHUB_CRED_ID=github \
+  -p GITHUB_USERNAME=jcpowermac \
+  -p GITHUB_TOKEN=token
   ```
-5. Add Jenkins to the project `oc process openshift//jenkins-ephemeral NAMESPACE=<project-name> MEMORY_LIMIT=2Gi | oc create -f -`
+5. Add Jenkins to the project `oc new-app --template jenkins-ephemeral -p NAMESPACE=$(oc project -q) -p MEMORY_LIMIT=2Gi`
 6. Add the pipeline `oc create -f https://raw.githubusercontent.com/jcpowermac/ojalloy/master/jenkins/openshift/pipeline.yaml`
 7. And finally start the pipeline `oc start-build createcred-pipeline`
 
