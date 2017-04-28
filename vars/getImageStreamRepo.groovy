@@ -1,15 +1,18 @@
 #!groovy
 
-def call(String imageStream) {
+def call(String imageStreamName) {
     stage('OpenShift Get ImageStream') {
         openshift.withCluster() {
             openshift.withProject() {
                 try {
-                    def is = openshift.selector("is/${imageStream}").object()
-                    return is.status.dockerImageRepository
+                    def is = openshift.selector("is/${imageStreamName}").object()
+                    String imageStream = "${is.metadata.namespace}/${is.metadata.name}"
+                    HashMap isMap = [dockerImageRepository: is.status.dockerImageRepository,
+                                     imageStream: imageStream]
+                    return isMap
                 }
                 catch(all) {
-                    error(all)
+                    currentBuild.result = 'FAILURE'
                 }
             }
         }
